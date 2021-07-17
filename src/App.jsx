@@ -3,10 +3,12 @@ import React, { useState } from "react";
 import { addItem } from "./function/function";
 import { toggleTodo } from "./function/function";
 import { deleteTodo } from "./function/function";
+import { toggleTodoAll } from "./function/function";
 
 function App() {
 	const [inputText, setInput] = useState("");
 	const [todos, setTodos] = useState([]);
+	const [checkComp, setCheckComp] = useState(true);
 
 	return (
 		<div>
@@ -17,14 +19,14 @@ function App() {
 						onSubmit={(e) => {
 							e.preventDefault();
 							setTodos(addItem(todos, inputText));
-
-							console.log(todos);
+							setInput("");
 						}}
 					>
 						<input
 							className="new-todo"
 							onInput={(evt) => setInput(evt.target.value)}
-							placeholder="What needs to be done?"
+							placeholder="Cosa hai bisogno di Fare?"
+							value={inputText}
 							autoFocus
 						/>
 					</form>
@@ -32,7 +34,15 @@ function App() {
 				{/* <!-- This section should be hidden by default and shown when there are todos --> */}
 				<section className="main">
 					<input id="toggle-all" className="toggle-all" type="checkbox" />
-					<label htmlFor="toggle-all">Mark all as complete</label>
+					<label
+						onClick={() => {
+							setTodos(toggleTodoAll(todos, checkComp));
+							setCheckComp(() => !checkComp);
+						}}
+						htmlFor="toggle-all"
+					>
+						Mark all as complete
+					</label>
 					<ul className="todo-list">
 						{/* <!-- These are here just to show the structure of the list items -->
 					<!-- List items should get the className `editing` when editing and `completed` when marked as completed --> */}
@@ -40,9 +50,13 @@ function App() {
 							<li className={todo.completed ? "completed" : ""}>
 								<div className="view">
 									<input
-										onChange={() => setTodos(toggleTodo(todos, index))}
+										onChange={(e) => {
+											e.target.checked = todo.completed;
+											setTodos(toggleTodo(todos, index));
+										}}
 										className="toggle"
 										type="checkbox"
+										checked={todo.completed}
 									/>
 									<label>{todo.todo}</label>
 									<button
@@ -53,14 +67,6 @@ function App() {
 								{<input className="edit" value="Create a TodoMVC template" />}
 							</li>
 						))}
-						<li>
-							<div className="view">
-								<input className="toggle" type="checkbox" />
-								<label>Buy a unicorn</label>
-								<button className="destroy"></button>
-							</div>
-							<input className="edit" value="Rule the web" />
-						</li>
 					</ul>
 				</section>
 				{/* <!-- This footer should be hidden by default and shown when there are todos --> */}
@@ -72,19 +78,39 @@ function App() {
 					{/* <!-- Remove this if you don't implement routing --> */}
 					<ul className="filters">
 						<li>
-							<a className="selected" href="#/">
+							<a
+								onClick={() => setTodos(todos.map((elem) => elem))}
+								className="selected"
+								href="#/"
+							>
 								All
 							</a>
 						</li>
 						<li>
-							<a href="#/active">Active</a>
+							<a
+								onClick={() =>
+									setTodos(todos.filter((elem) => elem.completed === false))
+								}
+								href="#/active"
+							>
+								Active
+							</a>
 						</li>
 						<li>
-							<a href="#/completed">Completed</a>
+							<a
+								onClick={() =>
+									setTodos(todos.filter((elem) => elem.completed === true))
+								}
+								href="#/completed"
+							>
+								Completed
+							</a>
 						</li>
 					</ul>
 					{/* <!-- Hidden if no completed items are left ↓ --> */}
-					<button className="clear-completed">Clear completed</button>
+					<button onClick={() => setTodos([])} className="clear-completed">
+						Clear completed
+					</button>
 				</footer>
 			</section>
 			<footer className="info">

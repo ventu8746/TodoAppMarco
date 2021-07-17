@@ -60,3 +60,15 @@ export function toggleTodo(arr, index) {
 		});
 	}
 }
+
+/**
+ *
+ * @param {Array<{text: string, completed: boolean}>} arr
+ * @param {number} index
+ * @returns {Array<{text: string, completed: boolean}>
+ */
+export function toggleTodoAll(arr, bool) {
+	return arr.map((elem) => {
+		return { todo: elem.todo, completed: bool };
+	});
+}
