@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 // import React, { useEffect } from "react";
 import { addItem } from "./function/function";
+import { toggleTodo } from "./function/function";
+import { deleteTodo } from "./function/function";
 
 function App() {
 	const [inputText, setInput] = useState("");
@@ -38,15 +40,15 @@ function App() {
 							<li className={todo.completed ? "completed" : ""}>
 								<div className="view">
 									<input
-										onClick={(e) =>
-											e.target.checked ? !e.target.checked  : e.target.checked
-											todo.completed ? !todo.completed
-										}
+										onChange={() => setTodos(toggleTodo(todos, index))}
 										className="toggle"
 										type="checkbox"
 									/>
 									<label>{todo.todo}</label>
-									<button className="destroy"></button>
+									<button
+										onClick={() => setTodos(deleteTodo(todos, index))}
+										className="destroy"
+									></button>
 								</div>
 								{<input className="edit" value="Create a TodoMVC template" />}
 							</li>
