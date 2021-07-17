@@ -72,3 +72,34 @@ export function toggleTodoAll(arr, bool) {
 		return { todo: elem.todo, completed: bool };
 	});
 }
+
+export const listNumber = "listNumber";
+
+export function serialize(list) {
+	localStorage.setItem(listNumber, JSON.stringify(list));
+}
+
+export function deserialize() {
+	const storage = localStorage.getItem(listNumber);
+	return storage !== null ? JSON.parse(storage) : undefined;
+}
+
+export function toggleTypeTodos(type, todos, todosActive, todosCompleted) {
+	let typeTodos;
+
+	switch (type) {
+		case "active":
+			typeTodos = todosActive;
+			break;
+		case "completed":
+			typeTodos = todosCompleted;
+			break;
+		case "all":
+			typeTodos = todos;
+			break;
+		default:
+			break;
+	}
+
+	return typeTodos;
+}

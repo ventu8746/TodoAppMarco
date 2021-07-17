@@ -1,14 +1,30 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+
 // import React, { useEffect } from "react";
 import { addItem } from "./function/function";
 import { toggleTodo } from "./function/function";
 import { deleteTodo } from "./function/function";
 import { toggleTodoAll } from "./function/function";
+import { serialize } from "./function/function";
+import { deserialize } from "./function/function";
+import { toggleTypeTodos } from "./function/function";
+import { listNumber } from "./function/function";
+
+let toogleConst = "all";
 
 function App() {
 	const [inputText, setInput] = useState("");
-	const [todos, setTodos] = useState([]);
+
+	const [todosActive, setTodosActive] = useState([]);
+	const [todosCompleted, setTodosCompleted] = useState([]);
+	const [todos, setTodos] = useState(
+		deserialize() === undefined ? [] : deserialize
+	);
 	const [checkComp, setCheckComp] = useState(true);
+
+	useEffect(() => {
+		serialize(todos);
+	}, [todos, todosCompleted, todosActive]);
 
 	return (
 		<div>
@@ -46,13 +62,28 @@ function App() {
 					<ul className="todo-list">
 						{/* <!-- These are here just to show the structure of the list items -->
 					<!-- List items should get the className `editing` when editing and `completed` when marked as completed --> */}
-						{todos.map((todo, index) => (
+						{toggleTypeTodos(
+							toogleConst,
+							todos,
+							todosActive,
+							todosCompleted
+						).map((todo, index) => (
 							<li className={todo.completed ? "completed" : ""}>
 								<div className="view">
 									<input
 										onChange={(e) => {
 											e.target.checked = todo.completed;
-											setTodos(toggleTodo(todos, index));
+											setTodos(
+												toggleTodo(
+													toggleTypeTodos(
+														toogleConst,
+														todos,
+														todosActive,
+														todosCompleted
+													),
+													index
+												)
+											);
 										}}
 										className="toggle"
 										type="checkbox"
@@ -60,7 +91,19 @@ function App() {
 									/>
 									<label>{todo.todo}</label>
 									<button
-										onClick={() => setTodos(deleteTodo(todos, index))}
+										onClick={() =>
+											setTodos(
+												deleteTodo(
+													toggleTypeTodos(
+														toogleConst,
+														todos,
+														todosActive,
+														todosCompleted
+													),
+													index
+												)
+											)
+										}
 										className="destroy"
 									></button>
 								</div>
@@ -79,7 +122,10 @@ function App() {
 					<ul className="filters">
 						<li>
 							<a
-								onClick={() => setTodos(todos.map((elem) => elem))}
+								onClick={() => {
+									toogleConst = "all";
+									setTodos(todos.map((elem) => elem));
+								}}
 								className="selected"
 								href="#/"
 							>
@@ -88,9 +134,12 @@ function App() {
 						</li>
 						<li>
 							<a
-								onClick={() =>
-									setTodos(todos.filter((elem) => elem.completed === false))
-								}
+								onClick={() => {
+									toogleConst = "active";
+									setTodosActive(
+										todos.filter((elem) => elem.completed === false)
+									);
+								}}
 								href="#/active"
 							>
 								Active
@@ -98,9 +147,12 @@ function App() {
 						</li>
 						<li>
 							<a
-								onClick={() =>
-									setTodos(todos.filter((elem) => elem.completed === true))
-								}
+								onClick={() => {
+									toogleConst = "completed";
+									return setTodosCompleted(
+										todos.filter((elem) => elem.completed === true)
+									);
+								}}
 								href="#/completed"
 							>
 								Completed
@@ -108,7 +160,12 @@ function App() {
 						</li>
 					</ul>
 					{/* <!-- Hidden if no completed items are left ↓ --> */}
-					<button onClick={() => setTodos([])} className="clear-completed">
+					<button
+						onClick={() => {
+							setTodos(todos.filter((elem) => elem.completed !== true));
+						}}
+						className="clear-completed"
+					>
 						Clear completed
 					</button>
 				</footer>
