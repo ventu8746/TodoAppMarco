@@ -10,13 +10,11 @@ import { deserialize } from "./function/function";
 import { toggleTypeTodos } from "./function/function";
 import { listNumber } from "./function/function";
 
-let toogleConst = "all";
-
 function App() {
 	const [inputText, setInput] = useState("");
 
-	const [todosActive, setTodosActive] = useState([]);
-	const [todosCompleted, setTodosCompleted] = useState([]);
+	const [todosType, setTypeToggle] = useState("all");
+
 	const [todos, setTodos] = useState(
 		deserialize() === undefined ? [] : deserialize
 	);
@@ -24,13 +22,14 @@ function App() {
 
 	useEffect(() => {
 		serialize(todos);
-	}, [todos, todosCompleted, todosActive]);
+	}, [todos]);
 
 	return (
 		<div>
 			<section className="todoapp">
 				<header className="header">
-					<h1>TodoAppMarco</h1>
+					<h1>TodoAppMarco </h1>
+
 					<form
 						onSubmit={(e) => {
 							e.preventDefault();
@@ -62,28 +61,13 @@ function App() {
 					<ul className="todo-list">
 						{/* <!-- These are here just to show the structure of the list items -->
 					<!-- List items should get the className `editing` when editing and `completed` when marked as completed --> */}
-						{toggleTypeTodos(
-							toogleConst,
-							todos,
-							todosActive,
-							todosCompleted
-						).map((todo, index) => (
+						{toggleTypeTodos(todosType, todos).map((todo, index) => (
 							<li className={todo.completed ? "completed" : ""}>
 								<div className="view">
 									<input
 										onChange={(e) => {
 											e.target.checked = todo.completed;
-											setTodos(
-												toggleTodo(
-													toggleTypeTodos(
-														toogleConst,
-														todos,
-														todosActive,
-														todosCompleted
-													),
-													index
-												)
-											);
+											setTodos(toggleTodo(todos, index));
 										}}
 										className="toggle"
 										type="checkbox"
@@ -91,19 +75,7 @@ function App() {
 									/>
 									<label>{todo.todo}</label>
 									<button
-										onClick={() =>
-											setTodos(
-												deleteTodo(
-													toggleTypeTodos(
-														toogleConst,
-														todos,
-														todosActive,
-														todosCompleted
-													),
-													index
-												)
-											)
-										}
+										onClick={() => setTodos(deleteTodo(todos, index))}
 										className="destroy"
 									></button>
 								</div>
@@ -116,15 +88,19 @@ function App() {
 				<footer className="footer">
 					{/* <!-- This should be `0 items left` by default --> */}
 					<span className="todo-count">
-						<strong>0</strong> item left
+						<strong>
+							{todos.filter((elem) => elem.completed === false).length}
+						</strong>{" "}
+						{todos.filter((elem) => elem.completed === false).length != 1
+							? "todo rimanenti"
+							: "todo rimanente"}
 					</span>
 					{/* <!-- Remove this if you don't implement routing --> */}
 					<ul className="filters">
 						<li>
 							<a
 								onClick={() => {
-									toogleConst = "all";
-									setTodos(todos.map((elem) => elem));
+									setTypeToggle("all");
 								}}
 								className="selected"
 								href="#/"
@@ -135,10 +111,7 @@ function App() {
 						<li>
 							<a
 								onClick={() => {
-									toogleConst = "active";
-									setTodosActive(
-										todos.filter((elem) => elem.completed === false)
-									);
+									setTypeToggle("active");
 								}}
 								href="#/active"
 							>
@@ -148,10 +121,7 @@ function App() {
 						<li>
 							<a
 								onClick={() => {
-									toogleConst = "completed";
-									return setTodosCompleted(
-										todos.filter((elem) => elem.completed === true)
-									);
+									setTypeToggle("completed");
 								}}
 								href="#/completed"
 							>
@@ -178,7 +148,7 @@ function App() {
 				</p>
 				{/* <!-- Change this out with your name and url ↓ --> */}
 				<p>
-					Created by <a href="http://todomvc.com">you</a>
+					Created by <a href="http://todomvc.com">Marco Venturini</a>
 				</p>
 				<p>
 					Part of <a href="http://todomvc.com">TodoMVC</a>

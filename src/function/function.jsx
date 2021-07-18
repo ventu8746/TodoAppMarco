@@ -84,22 +84,18 @@ export function deserialize() {
 	return storage !== null ? JSON.parse(storage) : undefined;
 }
 
-export function toggleTypeTodos(type, todos, todosActive, todosCompleted) {
-	let typeTodos;
-
-	switch (type) {
+export function toggleTypeTodos(filter, todos) {
+	switch (filter) {
 		case "active":
-			typeTodos = todosActive;
+			return todos.filter((elem) => elem.completed === false);
 			break;
 		case "completed":
-			typeTodos = todosCompleted;
+			return todos.filter((elem) => elem.completed === true);
 			break;
 		case "all":
-			typeTodos = todos;
+			return todos.map((elem) => elem);
 			break;
 		default:
 			break;
 	}
-
-	return typeTodos;
 }
