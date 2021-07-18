@@ -15,9 +15,7 @@ function App() {
 
 	const [todosType, setTypeToggle] = useState("all");
 
-	const [todos, setTodos] = useState(
-		deserialize() === undefined ? [] : deserialize
-	);
+	const [todos, setTodos] = useState(() => deserialize() || []);
 	const [checkComp, setCheckComp] = useState(true);
 
 	useEffect(() => {
@@ -65,8 +63,7 @@ function App() {
 							<li className={todo.completed ? "completed" : ""}>
 								<div className="view">
 									<input
-										onChange={(e) => {
-											e.target.checked = todo.completed;
+										onChange={() => {
 											setTodos(toggleTodo(todos, index));
 										}}
 										className="toggle"
