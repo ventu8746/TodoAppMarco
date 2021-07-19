@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from "react";
 
 // import React, { useEffect } from "react";
-import { addItem } from "./function/function";
-import { toggleTodo } from "./function/function";
-import { deleteTodo } from "./function/function";
-import { toggleTodoAll } from "./function/function";
-import { serialize } from "./function/function";
-import { deserialize } from "./function/function";
-import { toggleTypeTodos } from "./function/function";
-import { listNumber } from "./function/function";
+import {
+	addItem,
+	toggleTodo,
+	deleteTodo,
+	toggleTodoAll,
+	serialize,
+	deserialize,
+	toggleTypeTodos,
+	listNumber,
+} from "./function/function";
 
 function App() {
 	const [inputText, setInput] = useState("");
-
 	const [todosType, setTypeToggle] = useState("all");
-
 	const [todos, setTodos] = useState(() => deserialize() || []);
 	const [checkComp, setCheckComp] = useState(true);
 
@@ -22,23 +22,25 @@ function App() {
 		serialize(todos);
 	}, [todos]);
 
+	function handleSubmit(event) {
+		event.preventDefault();
+		setTodos(addItem(todos, inputText));
+		setInput("");
+	}
+
+	const filterActive = todos.filter((elem) => elem.completed === false).length;
+
 	return (
 		<div>
 			<section className="todoapp">
 				<header className="header">
 					<h1>TodoAppMarco </h1>
 
-					<form
-						onSubmit={(e) => {
-							e.preventDefault();
-							setTodos(addItem(todos, inputText));
-							setInput("");
-						}}
-					>
+					<form onSubmit={handleSubmit}>
 						<input
 							className="new-todo"
 							onInput={(evt) => setInput(evt.target.value)}
-							placeholder="Cosa hai bisogno di Fare?"
+							placeholder="Cosa devi portare a termine?"
 							value={inputText}
 							autoFocus
 						/>
@@ -64,7 +66,9 @@ function App() {
 								<div className="view">
 									<input
 										onChange={() => {
-											setTodos(toggleTodo(todos, index));
+											setTodos(
+												toggleTodo(toggleTypeTodos(todosType, todos), index)
+											);
 										}}
 										className="toggle"
 										type="checkbox"
@@ -85,12 +89,8 @@ function App() {
 				<footer className="footer">
 					{/* <!-- This should be `0 items left` by default --> */}
 					<span className="todo-count">
-						<strong>
-							{todos.filter((elem) => elem.completed === false).length}
-						</strong>{" "}
-						{todos.filter((elem) => elem.completed === false).length != 1
-							? "todo rimanenti"
-							: "todo rimanente"}
+						<strong>{filterActive}</strong>{" "}
+						{filterActive != 1 ? "todo rimanenti" : "todo rimanente"}
 					</span>
 					{/* <!-- Remove this if you don't implement routing --> */}
 					<ul className="filters">
