@@ -26,7 +26,7 @@ function App() {
 
 	function handleSubmit(event) {
 		event.preventDefault();
-		setTodos(addItem(todos, inputText, idCount));
+		setTodos(addItem(todos, inputText));
 		setInput("");
 		idCount++;
 	}

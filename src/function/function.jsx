@@ -5,13 +5,15 @@ import React from "react";
  * @param {string} string
  * @returns {Array<{text: string, completed: boolean}>}s
  */
-export function addItem(arr, string, id) {
+export function addItem(arr, string) {
+	const idMax = arr.length === 0 ? 0 : Math.max(...arr.map((todo) => todo.id));
+
 	if (string === "") {
 		return arr;
 	}
 	return arr.concat([
 		{
-			id: id,
+			id: idMax + 1,
 			todo: string,
 			completed: false,
 		},
