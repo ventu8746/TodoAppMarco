@@ -12,6 +12,8 @@ import {
 	listNumber,
 } from "./function/function";
 
+let idCount = 0;
+
 function App() {
 	const [inputText, setInput] = useState("");
 	const [todosType, setTypeToggle] = useState("all");
@@ -24,11 +26,13 @@ function App() {
 
 	function handleSubmit(event) {
 		event.preventDefault();
-		setTodos(addItem(todos, inputText));
+		setTodos(addItem(todos, inputText, idCount));
 		setInput("");
+		idCount++;
 	}
 
-	const filterActive = todos.filter((elem) => elem.completed === false).length;
+	const filterActive = todos.filter((elem) => !elem.completed).length;
+	const todosSwitch = toggleTypeTodos(todosType, todos);
 
 	return (
 		<div>
@@ -61,14 +65,12 @@ function App() {
 					<ul className="todo-list">
 						{/* <!-- These are here just to show the structure of the list items -->
 					<!-- List items should get the className `editing` when editing and `completed` when marked as completed --> */}
-						{toggleTypeTodos(todosType, todos).map((todo, index) => (
+						{todosSwitch.map((todo, index) => (
 							<li className={todo.completed ? "completed" : ""}>
 								<div className="view">
 									<input
 										onChange={() => {
-											setTodos(
-												toggleTodo(toggleTypeTodos(todosType, todos), index)
-											);
+											setTodos(toggleTodo(todos, index, todo.id));
 										}}
 										className="toggle"
 										type="checkbox"
@@ -76,7 +78,7 @@ function App() {
 									/>
 									<label>{todo.todo}</label>
 									<button
-										onClick={() => setTodos(deleteTodo(todos, index))}
+										onClick={() => setTodos(deleteTodo(todos, index, todo.id))}
 										className="destroy"
 									></button>
 								</div>

@@ -5,12 +5,13 @@ import React from "react";
  * @param {string} string
  * @returns {Array<{text: string, completed: boolean}>}s
  */
-export function addItem(arr, string) {
+export function addItem(arr, string, id) {
 	if (string === "") {
 		return arr;
 	}
 	return arr.concat([
 		{
+			id: id,
 			todo: string,
 			completed: false,
 		},
@@ -23,7 +24,7 @@ export function addItem(arr, string) {
  * @param {number} index
  * @returns {Array<{text: string, completed: boolean}>
  */
-export function deleteTodo(arr, index) {
+/* export function deleteTodo(arr, index) {
 	if (index > arr.length || index < 0) {
 		throw new Error("the index that you have insert is inexistent");
 	}
@@ -35,6 +36,20 @@ export function deleteTodo(arr, index) {
 			return elem !== arr[index];
 		});
 	}
+} */
+
+export function deleteTodo(arr, index, id) {
+	if (index > arr.length || index < 0) {
+		throw new Error("the index that you have insert is inexistent");
+	}
+
+	if (index === "" || index === undefined) {
+		return arr;
+	} else {
+		return arr.filter((elem) => {
+			return elem.id !== id;
+		});
+	}
 }
 
 /**
@@ -43,7 +58,7 @@ export function deleteTodo(arr, index) {
  * @param {number} index
  * @returns {Array<{text: string, completed: boolean}>
  */
-export function toggleTodo(arr, index) {
+/* export function toggleTodo(arr, index) {
 	if (index > arr.length || index < 0) {
 		throw new Error("the index that you have insert is inexistent");
 	}
@@ -56,6 +71,24 @@ export function toggleTodo(arr, index) {
 				return elem;
 			} else {
 				return { todo: elem.todo, completed: !elem.completed };
+			}
+		});
+	}
+} */
+
+export function toggleTodo(arr, index, id) {
+	if (index > arr.length || index < 0) {
+		throw new Error("the index that you have insert is inexistent");
+	}
+
+	if (index === "" || index === undefined) {
+		return arr;
+	} else {
+		return arr.map((elem, index2) => {
+			if (elem.id !== id) {
+				return elem;
+			} else {
+				return { id: id, todo: elem.todo, completed: !elem.completed };
 			}
 		});
 	}
