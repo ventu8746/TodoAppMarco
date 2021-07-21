@@ -76,7 +76,9 @@ function App() {
 										type="checkbox"
 										checked={todo.completed}
 									/>
-									<label>{todo.todo}</label>
+									<label onDoubleClick={(e) => alert(e.target.value)}>
+										{todo.todo}
+									</label>
 									<button
 										onClick={() => setTodos(deleteTodo(todos, index, todo.id))}
 										className="destroy"
