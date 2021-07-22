@@ -151,10 +151,10 @@ function App() {
 					<ul className="filters">
 						<li>
 							<a
-								onClick={() => {
+								onClick={(e) => {
 									setTypeToggle("all");
 								}}
-								className="selected"
+								className={todosType === "all" ? "selected" : ""}
 								href="#/"
 							>
 								All
@@ -166,6 +166,7 @@ function App() {
 									setTypeToggle("active");
 								}}
 								href="#/active"
+								className={todosType === "active" ? "selected" : ""}
 							>
 								Active
 							</a>
@@ -176,6 +177,7 @@ function App() {
 									setTypeToggle("completed");
 								}}
 								href="#/completed"
+								className={todosType === "completed" ? "selected" : ""}
 							>
 								Completed
 							</a>
@@ -186,7 +188,12 @@ function App() {
 						onClick={() => {
 							setTodos(todos.filter((elem) => elem.completed !== true));
 						}}
-						className="clear-completed"
+						className="clear-completed "
+						style={
+							todos.filter((elem) => elem.completed === true).length === 0
+								? { display: "none" }
+								: { display: "inline" }
+						}
 					>
 						Clear completed
 					</button>
