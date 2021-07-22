@@ -134,3 +134,7 @@ export function toggleTypeTodos(filter, todos) {
 			break;
 	}
 }
+
+export function modifyTodo(string, arr, id) {
+	return arr.filter((elem) => (elem.id === id ? (elem.todo = string) : elem));
+}

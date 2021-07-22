@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 // import React, { useEffect } from "react";
 import {
@@ -10,15 +10,32 @@ import {
 	deserialize,
 	toggleTypeTodos,
 	listNumber,
+	modifyTodo,
 } from "./function/function";
 
-let idCount = 0;
+function Component() {
+	const inputRef = useRef(null);
+
+	const focusInput = () => {
+		inputRef.current.focus();
+	};
+
+	return (
+		<div>
+			<input ref={inputRef} />
+			<button onClick={focusInput}>Focus Input</button>
+		</div>
+	);
+}
 
 function App() {
 	const [inputText, setInput] = useState("");
 	const [todosType, setTypeToggle] = useState("all");
 	const [todos, setTodos] = useState(() => deserialize() || []);
 	const [checkComp, setCheckComp] = useState(true);
+	const [editing, toggleEditing] = useState(false);
+	const [editTodo, setEditTodo] = useState("");
+	const [idTodo, selectIdTodo] = useState(null);
 
 	useEffect(() => {
 		serialize(todos);
@@ -31,11 +48,18 @@ function App() {
 		idCount++;
 	}
 
+	const focusInput = () => {
+		inputSel.current.focus();
+	};
+
 	const filterActive = todos.filter((elem) => !elem.completed).length;
 	const todosSwitch = toggleTypeTodos(todosType, todos);
 
+	const inputSel = useRef(null);
+
 	return (
 		<div>
+			<Component />
 			<section className="todoapp">
 				<header className="header">
 					<h1>TodoAppMarco </h1>
@@ -66,7 +90,12 @@ function App() {
 						{/* <!-- These are here just to show the structure of the list items -->
 					<!-- List items should get the className `editing` when editing and `completed` when marked as completed --> */}
 						{todosSwitch.map((todo, index) => (
-							<li className={todo.completed ? "completed" : ""}>
+							<li
+								className={`${todo.completed ? "completed" : ""} ${
+									idTodo === todo.id ? "editing " : ""
+								}`}
+								/* className={idTodo === todo.id ? "editing " : ""} */
+							>
 								<div className="view">
 									<input
 										onChange={() => {
@@ -76,7 +105,14 @@ function App() {
 										type="checkbox"
 										checked={todo.completed}
 									/>
-									<label onDoubleClick={(e) => alert(e.target.value)}>
+									<label
+										onDoubleClick={() => {
+											selectIdTodo(todo.id);
+											toggleEditing(!editing);
+											setEditTodo(todo.todo);
+											focusInput();
+										}}
+									>
 										{todo.todo}
 									</label>
 									<button
@@ -84,7 +120,22 @@ function App() {
 										className="destroy"
 									></button>
 								</div>
-								{<input className="edit" value="Create a TodoMVC template" />}
+								{
+									<input
+										className="edit"
+										onKeyUp={(e) => {
+											if (e.key === "Enter" || e.key === 13) {
+												setTodos(modifyTodo(editTodo, todos, idTodo));
+												selectIdTodo(null);
+											}
+										}}
+										onInput={(e) => {
+											setEditTodo(() => e.target.value);
+										}}
+										value={editTodo}
+										ref={inputSel}
+									/>
+								}
 							</li>
 						))}
 					</ul>
