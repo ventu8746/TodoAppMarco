@@ -13,21 +13,6 @@ import {
 	modifyTodo,
 } from "./function/function";
 
-function Component() {
-	const inputRef = useRef(null);
-
-	const focusInput = () => {
-		inputRef.current.focus();
-	};
-
-	return (
-		<div>
-			<input ref={inputRef} />
-			<button onClick={focusInput}>Focus Input</button>
-		</div>
-	);
-}
-
 function App() {
 	const [inputText, setInput] = useState("");
 	const [todosType, setTypeToggle] = useState("all");
@@ -59,7 +44,6 @@ function App() {
 
 	return (
 		<div>
-			<Component />
 			<section className="todoapp">
 				<header className="header">
 					<h1>TodoAppMarco </h1>
