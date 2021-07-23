@@ -104,16 +104,10 @@ export function toggleTodo(arr, index, id) {
  * @param {number} index
  * @returns {Array<{text: string, completed: boolean}>
  */
-export function toggleTodoAll(arr, bool) {
-	if (bool) {
-		return arr.map((elem) => {
-			return { todo: elem.todo, completed: bool };
-		});
-	} else {
-		return arr.map((elem) => {
-			return { todo: elem.todo, completed: !bool };
-		});
-	}
+export function toggleTodoAll(arr, bool, id) {
+	return arr.map((elem) => {
+		return { id: id++, todo: elem.todo, completed: !bool };
+	});
 }
 
 export const listNumber = "listNumber";

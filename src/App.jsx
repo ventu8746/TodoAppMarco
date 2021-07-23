@@ -13,6 +13,8 @@ import {
 	modifyTodo,
 } from "./function/function";
 
+const idCount = 0;
+
 function App() {
 	const [inputText, setInput] = useState("");
 	const [todosType, setTypeToggle] = useState("all");
@@ -72,8 +74,10 @@ function App() {
 						onClick={() => {
 							setTodos(
 								toggleTodoAll(
-									todosSwitch,
-									todos.filter((elem) => elem.completed === false).length === 0
+									todos,
+									todos.filter((elem) => elem.completed === false).length === 0,
+
+									idCount
 								)
 							);
 						}}
