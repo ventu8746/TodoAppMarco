@@ -13,17 +13,22 @@ import {
 	modifyTodo,
 } from "./function/function";
 
+
+
 function App() {
 	const [inputText, setInput] = useState("");
 	const [todosType, setTypeToggle] = useState("all");
 	const [todos, setTodos] = useState(() => deserialize() || []);
-	const [checkComp, setCheckComp] = useState(true);
+	const [checkComp, setCheckComp] = useState(false);
 	const [editing, toggleEditing] = useState(false);
 	const [editTodo, setEditTodo] = useState("");
 	const [idTodo, selectIdTodo] = useState(null);
 
+	
+console.log(todos.length);
 	useEffect(() => {
 		serialize(todos);
+		todos.filter((elem) => elem.completed === false).length===0?setCheckComp(true):setCheckComp(false);
 	}, [todos]);
 
 	function handleSubmit(event) {
@@ -41,6 +46,8 @@ function App() {
 	const todosSwitch = toggleTypeTodos(todosType, todos);
 
 	const inputSel = useRef(null);
+
+	
 
 	return (
 		<div>
@@ -60,13 +67,19 @@ function App() {
 				</header>
 				{/* <!-- This section should be hidden by default and shown when there are todos --> */}
 				<section className="main">
-					<input id="toggle-all" className="toggle-all" type="checkbox" />
+					<input id="toggle-all" className="toggle-all" 
+					type="checkbox" 
+					checked={checkComp} 
+					/>
 					<label
+					style={todosSwitch.length === 0 ? { display: "none" }: { display: "" }}
 						onClick={() => {
-							setTodos(toggleTodoAll(todos, checkComp));
-							setCheckComp(() => !checkComp);
+							setTodos(toggleTodoAll(todosSwitch, true));
+							
 						}}
+						checked={checkComp?'true':'false'}
 						htmlFor="toggle-all"
+						
 					>
 						Mark all as complete
 					</label>
@@ -94,7 +107,7 @@ function App() {
 											selectIdTodo(todo.id);
 											toggleEditing(!editing);
 											setEditTodo(todo.todo);
-											focusInput();
+											requestAnimationFrame(focus);
 										}}
 									>
 										{todo.todo}
