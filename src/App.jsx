@@ -13,22 +13,19 @@ import {
 	modifyTodo,
 } from "./function/function";
 
-
-
 function App() {
 	const [inputText, setInput] = useState("");
 	const [todosType, setTypeToggle] = useState("all");
 	const [todos, setTodos] = useState(() => deserialize() || []);
 	const [checkComp, setCheckComp] = useState(false);
+	const [bool, setBool] = useState(false);
 	const [editing, toggleEditing] = useState(false);
 	const [editTodo, setEditTodo] = useState("");
 	const [idTodo, selectIdTodo] = useState(null);
 
-	
-console.log(todos.length);
+	console.log(todos.length);
 	useEffect(() => {
 		serialize(todos);
-		todos.filter((elem) => elem.completed === false).length===0?setCheckComp(true):setCheckComp(false);
 	}, [todos]);
 
 	function handleSubmit(event) {
@@ -46,8 +43,6 @@ console.log(todos.length);
 	const todosSwitch = toggleTypeTodos(todosType, todos);
 
 	const inputSel = useRef(null);
-
-	
 
 	return (
 		<div>
@@ -67,19 +62,32 @@ console.log(todos.length);
 				</header>
 				{/* <!-- This section should be hidden by default and shown when there are todos --> */}
 				<section className="main">
-					<input id="toggle-all" className="toggle-all" 
-					type="checkbox" 
-					checked={checkComp} 
+					<input
+						id="toggle-all"
+						className="toggle-all"
+						type="checkbox"
+						checked={
+							todos.filter((elem) => elem.completed === false).length === 0
+						}
+						onClick={() => {
+							setTodos(
+								toggleTodoAll(
+									todosSwitch,
+									todos.filter((elem) => elem.completed === false).length === 0
+								)
+							);
+						}}
 					/>
 					<label
-					style={todosSwitch.length === 0 ? { display: "none" }: { display: "" }}
-						onClick={() => {
-							setTodos(toggleTodoAll(todosSwitch, true));
-							
-						}}
-						checked={checkComp?'true':'false'}
+						style={
+							todosSwitch.length === 0 ? { display: "none" } : { display: "" }
+						}
+						checked={
+							todos.filter((elem) => elem.completed === false).length === 0
+								? "true"
+								: "false"
+						}
 						htmlFor="toggle-all"
-						
 					>
 						Mark all as complete
 					</label>

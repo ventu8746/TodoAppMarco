@@ -1,4 +1,6 @@
+import { useState } from "react";
 import React from "react";
+
 /**
  *
  * @param {Array<{text: string, completed: boolean}>} arr
@@ -103,9 +105,15 @@ export function toggleTodo(arr, index, id) {
  * @returns {Array<{text: string, completed: boolean}>
  */
 export function toggleTodoAll(arr, bool) {
-	return arr.map((elem) => {
-		return { todo: elem.todo, completed: bool };
-	});
+	if (bool) {
+		return arr.map((elem) => {
+			return { todo: elem.todo, completed: bool };
+		});
+	} else {
+		return arr.map((elem) => {
+			return { todo: elem.todo, completed: !bool };
+		});
+	}
 }
 
 export const listNumber = "listNumber";
