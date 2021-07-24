@@ -19,7 +19,6 @@ function App() {
 	const [inputText, setInput] = useState("");
 	const [todosType, setTypeToggle] = useState("all");
 	const [todos, setTodos] = useState(() => deserialize() || []);
-	const [checkComp, setCheckComp] = useState(false);
 	const [bool, setBool] = useState(false);
 	const [editing, toggleEditing] = useState(false);
 	const [editTodo, setEditTodo] = useState("");
@@ -88,8 +87,8 @@ function App() {
 						}
 						checked={
 							todos.filter((elem) => elem.completed === false).length === 0
-								? "true"
-								: "false"
+								? true
+								: false
 						}
 						htmlFor="toggle-all"
 					>
@@ -117,9 +116,9 @@ function App() {
 									<label
 										onDoubleClick={() => {
 											selectIdTodo(todo.id);
-											toggleEditing(!editing);
+											/* toggleEditing(!editing); */
 											setEditTodo(todo.todo);
-											requestAnimationFrame(focus);
+											requestAnimationFrame(focusInput);
 										}}
 									>
 										{todo.todo}
@@ -129,22 +128,31 @@ function App() {
 										className="destroy"
 									></button>
 								</div>
-								{
-									<input
-										className="edit"
-										onKeyUp={(e) => {
-											if (e.key === "Enter" || e.key === 13) {
-												setTodos(modifyTodo(editTodo, todos, idTodo));
-												selectIdTodo(null);
-											}
-										}}
-										onInput={(e) => {
-											setEditTodo(() => e.target.value);
-										}}
-										value={editTodo}
-										ref={inputSel}
-									/>
-								}
+								<input
+									onBlur={() => {
+										setTodos(modifyTodo(editTodo, todos, idTodo));
+										selectIdTodo(null);
+									}}
+									className="edit"
+									onKeyUp={(e) => {
+										if (e.key === "Enter" || e.key === 13) {
+											setTodos(modifyTodo(editTodo, todos, idTodo));
+											selectIdTodo(null);
+										} else if (e.key === "Escape" || e.key === 27) {
+											setTodos(todos);
+											selectIdTodo(null);
+										}
+									}}
+									onInput={(e) => {
+										setEditTodo(() => e.target.value);
+									}}
+									value={editTodo}
+									ref={(element) => {
+										if (idTodo === todo.id) {
+											inputSel.current = element;
+										}
+									}}
+								/>
 							</li>
 						))}
 					</ul>
