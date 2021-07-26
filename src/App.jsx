@@ -36,6 +36,16 @@ function App() {
 		idCount++;
 	}
 
+	function handleKeyUp(e) {
+		if (e.key === "Enter" || e.key === 13) {
+			setTodos(modifyTodo(editTodo, todos, idTodo));
+			selectIdTodo(null);
+		} else if (e.key === "Escape" || e.key === 27) {
+			setTodos(todos);
+			selectIdTodo(null);
+		}
+	}
+
 	const focusInput = () => {
 		inputSel.current.focus();
 	};
@@ -45,11 +55,16 @@ function App() {
 
 	const inputSel = useRef(null);
 
+	const active = todos.filter((elem) => elem.completed === false).length === 0;
+
+	const completed =
+		todos.filter((elem) => elem.completed === true).length === 0;
+
 	return (
 		<div>
 			<section className="todoapp">
 				<header className="header">
-					<h1>TodoAppMarco </h1>
+					<h1>TodoAppMarco</h1>
 
 					<form onSubmit={handleSubmit}>
 						<input
@@ -67,29 +82,16 @@ function App() {
 						id="toggle-all"
 						className="toggle-all"
 						type="checkbox"
-						checked={
-							todos.filter((elem) => elem.completed === false).length === 0
-						}
+						checked={active}
 						onClick={() => {
-							setTodos(
-								toggleTodoAll(
-									todos,
-									todos.filter((elem) => elem.completed === false).length === 0,
-
-									idCount
-								)
-							);
+							setTodos(toggleTodoAll(todos, active, idCount));
 						}}
 					/>
 					<label
 						style={
 							todosSwitch.length === 0 ? { display: "none" } : { display: "" }
 						}
-						checked={
-							todos.filter((elem) => elem.completed === false).length === 0
-								? true
-								: false
-						}
+						checked={active ? true : false}
 						htmlFor="toggle-all"
 					>
 						Mark all as complete
@@ -134,15 +136,7 @@ function App() {
 										selectIdTodo(null);
 									}}
 									className="edit"
-									onKeyUp={(e) => {
-										if (e.key === "Enter" || e.key === 13) {
-											setTodos(modifyTodo(editTodo, todos, idTodo));
-											selectIdTodo(null);
-										} else if (e.key === "Escape" || e.key === 27) {
-											setTodos(todos);
-											selectIdTodo(null);
-										}
-									}}
+									onKeyUp={handleKeyUp}
 									onInput={(e) => {
 										setEditTodo(() => e.target.value);
 									}}
@@ -203,14 +197,10 @@ function App() {
 					{/* <!-- Hidden if no completed items are left ↓ --> */}
 					<button
 						onClick={() => {
-							setTodos(todos.filter((elem) => elem.completed !== true));
+							setTodos(completed);
 						}}
 						className="clear-completed "
-						style={
-							todos.filter((elem) => elem.completed === true).length === 0
-								? { display: "none" }
-								: { display: "inline" }
-						}
+						style={completed ? { display: "none" } : { display: "inline" }}
 					>
 						Clear completed
 					</button>
