@@ -24,7 +24,6 @@ function App() {
 	const [editTodo, setEditTodo] = useState("");
 	const [idTodo, selectIdTodo] = useState(null);
 
-	console.log(todos.length);
 	useEffect(() => {
 		serialize(todos);
 	}, [todos]);
@@ -46,19 +45,26 @@ function App() {
 		}
 	}
 
+	function handleDoubleClick(todo, id) {
+		selectIdTodo(id);
+		/* toggleEditing(!editing); */
+		setEditTodo(todo);
+		requestAnimationFrame(focusInput);
+	}
+
 	const focusInput = () => {
 		inputSel.current.focus();
 	};
 
 	const filterActive = todos.filter((elem) => !elem.completed).length;
+
 	const todosSwitch = toggleTypeTodos(todosType, todos);
 
 	const inputSel = useRef(null);
 
-	const active = todos.filter((elem) => elem.completed === false).length === 0;
+	const active = todos.filter((elem) => elem.completed === false);
 
-	const completed =
-		todos.filter((elem) => elem.completed === true).length === 0;
+	const completed = todos.filter((elem) => elem.completed === true);
 
 	return (
 		<div>
@@ -82,16 +88,16 @@ function App() {
 						id="toggle-all"
 						className="toggle-all"
 						type="checkbox"
-						checked={active}
+						checked={active.length === 0}
 						onClick={() => {
-							setTodos(toggleTodoAll(todos, active, idCount));
+							setTodos(toggleTodoAll(todos, active.length === 0, idCount));
 						}}
 					/>
 					<label
 						style={
 							todosSwitch.length === 0 ? { display: "none" } : { display: "" }
 						}
-						checked={active ? true : false}
+						checked={active.length === 0 ? true : false}
 						htmlFor="toggle-all"
 					>
 						Mark all as complete
@@ -116,12 +122,7 @@ function App() {
 										checked={todo.completed}
 									/>
 									<label
-										onDoubleClick={() => {
-											selectIdTodo(todo.id);
-											/* toggleEditing(!editing); */
-											setEditTodo(todo.todo);
-											requestAnimationFrame(focusInput);
-										}}
+										onDoubleClick={() => handleDoubleClick(todo.todo, todo.id)}
 									>
 										{todo.todo}
 									</label>
@@ -197,10 +198,14 @@ function App() {
 					{/* <!-- Hidden if no completed items are left ↓ --> */}
 					<button
 						onClick={() => {
-							setTodos(completed);
+							setTodos(active);
 						}}
 						className="clear-completed "
-						style={completed ? { display: "none" } : { display: "inline" }}
+						style={
+							completed.length === 0
+								? { display: "none" }
+								: { display: "inline" }
+						}
 					>
 						Clear completed
 					</button>
