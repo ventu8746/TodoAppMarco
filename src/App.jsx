@@ -70,7 +70,7 @@ function App() {
 		<div>
 			<section className="todoapp">
 				<header className="header">
-					<h1>TodoAppMarco</h1>
+					<h1>Todos</h1>
 
 					<form onSubmit={handleSubmit}>
 						<input
